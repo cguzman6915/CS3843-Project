@@ -143,14 +143,14 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Documents\CS 3843 Computer Organization Assignments\2026 08 - ProjectFiles4Students\CryptoMain_Student.cpp" />
-    <ClCompile Include="..\..\..\Documents\CS 3843 Computer Organization Assignments\2026 08 - ProjectFiles4Students\DecryptData_Initial.cpp" />
-    <ClCompile Include="..\..\..\Documents\CS 3843 Computer Organization Assignments\2026 08 - ProjectFiles4Students\EncryptData_Initial.cpp" />
-    <ClCompile Include="..\..\..\Documents\CS 3843 Computer Organization Assignments\2026 08 - ProjectFiles4Students\SHA-256.cpp" />
+    <ClCompile Include="resources\CryptoMain_Student.cpp" />
+    <ClCompile Include="resources\DecryptData_Initial.cpp" />
+    <ClCompile Include="resources\EncryptData_Initial.cpp" />
+    <ClCompile Include="resources\SHA-256.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Documents\CS 3843 Computer Organization Assignments\2026 08 - ProjectFiles4Students\Main.h" />
-    <ClInclude Include="..\..\..\Documents\CS 3843 Computer Organization Assignments\2026 08 - ProjectFiles4Students\SHA-256.h" />
+    <ClInclude Include="resources\Main.h" />
+    <ClInclude Include="resources\SHA-256.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
