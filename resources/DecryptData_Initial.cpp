@@ -9,7 +9,36 @@ void decryptData_01(char* data, int sized)
 {
 	__asm
 	{
-		nop		// REPLACE THIS WITH YOUR DECRYPT CODE FOR MILESTONE #1
+		// Get the password hash address
+		mov		esi, gptrPasswordHash
+
+		// Calculate starting index
+		movzx	eax, byte ptr[esi]
+		shl		eax, 8
+
+		movzx	edx, byte ptr[esi + 1]
+		or		eax, edx
+
+		// Get key and input data addresses
+		mov		esi, gptrKey
+		mov		edi, data
+
+		// Get key byte at starting index
+		mov		dl, byte ptr[esi + eax]
+
+		// Set loop counter
+		mov		ecx, sized
+
+		// Check for empty input
+		test	ecx, ecx
+		jle		decrypt_done
+
+	decrypt:
+		xor		byte ptr[edi], dl
+		inc		edi
+		dec		ecx
+		jnz		decrypt
+	decrypt_done:
 	}
 
 	return;
