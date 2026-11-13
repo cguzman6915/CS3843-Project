@@ -1,6 +1,6 @@
 # Encrypt/decrypt output files produced by test runs
-*.enc
-*.dec
+#*.enc
+#*.dec
 # ...except the reference encrypted sample
 !resources/1_testASCII.txt.enc
 
