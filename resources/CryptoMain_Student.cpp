@@ -69,8 +69,8 @@ char gInFileName[256];
 char gOutFileName[256];
 char gKeyFileName[256];
 int gOp = 0;			// 1 = encrypt, 2 = decrypt
-int gNumRounds = 1;
-int gMilestone = 1;
+int gNumRounds = 0;
+int gMilestone = 2;
 
 
 // code to read the file to encrypt
@@ -99,14 +99,16 @@ int encryptFile(FILE *fptrIn, FILE *fptrOut)
 
 	fread(buffer, 1, filesize, fptrIn);	// read entire file
 
+	//printf("Address of buffer: %p\nValue of buffer: %s\nAddress of filesize: %p\nValue of filesize: %s", (void*)buffer, buffer, (void*)filesize, filesize);
+
 	switch(gMilestone)
 	{
 	case 1:
-		encryptData_01(buffer, filesize);
+		//encryptData_01(buffer, filesize);
 		break;
 
 	case 2:
-		//encryptData_02(buffer, filesize);	// UNCOMMENT FOR MILESTONE #2
+		encryptData_02(buffer, filesize);	// UNCOMMENT FOR MILESTONE #2
 		break;
 
 	case 3:
@@ -155,11 +157,11 @@ int decryptFile(FILE *fptrIn, FILE *fptrOut)
 	switch(gMilestone)
 	{
 	case 1:
-		decryptData_01(buffer, filesize);
+		//decryptData_01(buffer, filesize);
 		break;
 
 	case 2:
-		//decryptData_02(buffer, filesize);	// UNCOMMENT FOR MILESTONE #2
+		decryptData_02(buffer, filesize);	// UNCOMMENT FOR MILESTONE #2
 		break;
 
 	case 3:

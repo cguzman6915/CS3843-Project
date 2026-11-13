@@ -14,11 +14,61 @@ void encryptData_01(char* data, int datalength)
 		mov		esi, gptrPasswordHash
 
 		// Calculate starting index
+			// gPasswordHash[0+round*4] * 256
 		movzx	eax, byte ptr[esi]
 		shl		eax, 8
 
-		movzx	edx, byte ptr[esi + 1]
-		or		eax, edx
+			// gPasswordHash[1+round*4]
+		movzx	edx, byte ptr[esi + 1 /*+ round * 4*/]
+			// index
+		add		eax, edx
+
+		// Get key and input data addresses
+			// gKey[0]
+		mov		esi, gptrKey
+		mov		edi, data
+
+		// Get key byte at starting index
+			// gKey[index]
+		mov		dl, byte ptr[esi + eax]
+
+		// Set loop counter
+			// for (x < datalength)
+		mov		ecx, datalength
+
+		// Check for empty input
+		test	ecx, ecx
+		jle		encrypt_done
+
+	encrypt:
+			// data[x] = data[x] ^ gKey[index]
+		xor		byte ptr[edi], dl
+
+			// x++
+		inc		edi
+		dec		ecx
+
+		jnz		encrypt
+	encrypt_done:
+	}
+
+	return;
+} // encryptData_01
+
+
+void encryptData_02(char* data, int datalength)
+{
+
+	__asm {
+		// Get the password hash address
+		mov		esi, gptrPasswordHash
+
+		// Calculate starting index
+		movzx	eax, byte ptr[esi]
+		shl		eax, 8
+
+		movzx	edx, byte ptr[esi + 1 /*+ round * 4*/]
+		add		eax, edx
 
 		// Get key and input data addresses
 		mov		esi, gptrKey
@@ -35,23 +85,74 @@ void encryptData_01(char* data, int datalength)
 		jle		encrypt_done
 
 	encrypt:
-		xor		byte ptr[edi], dl
+		/* Milestone 1 */
+			xor		byte ptr[edi], dl
+
+		/* C-INVERT BITS 0,1,6,7 */
+			xor		byte ptr[edi], C3h
+
+		/* D-REVERSE BIT ORDER */
+			// Load data[x] into al
+			mov		al, byte ptr[edi]
+
+			// Swap nibbles
+			ror		al, 4
+
+			// Swap pairs of bits
+			mov		bl, al
+			and		al, CCh
+			shr		al, 2
+			and		bl, 33h
+			shl		bl, 2
+			or		al, bl
+
+			//		Swap individual bits
+			mov		bl, al
+			and		al, AAh
+			shr		al, 1
+			and		bl, 55h
+			shl		bl, 1
+			or		al, bl
+
+			// Store reversed byte
+			mov		byte ptr[edi], al
+
+		/* A-ROTATE NIBBLES LEFT */
+			// Load data[x] into al and dl
+			mov		al, byte ptr[edi]
+			mov		dl, al
+
+			// Rotate upper nibble left
+			and		al, 70h
+			shl		al, 1
+			and		dl, 80h
+			shr		dl, 3
+			or		al, dl
+
+			// Load data[x] into bl and dl
+			mov		bl, byte ptr[edi]
+			mov		dl, bl
+
+			// Rotate lower nibble left
+			and		bl, 07h
+			shl		bl, 1
+			and		dl, 08h
+			shr		dl, 3
+			or		bl, dl
+
+			// Combine both nibbles
+			or		al, bl
+
+			// Store result
+			mov		byte ptr[edi], al
+
+		/* E-ROTATE GH BITS RIGHT */
+		/* B-CODE TABLE SWAP */
+
 		inc		edi
 		dec		ecx
 		jnz		encrypt
 	encrypt_done:
-	}
-
-	return;
-} // encryptData_01
-
-
-void encryptData_02(char* data, int datalength)
-{
-
-	__asm
-	{
-		nop		// REPLACE THIS WITH YOUR ENCRYPT CODE FOR MILESTONE #2
 	}
 
 	return;
