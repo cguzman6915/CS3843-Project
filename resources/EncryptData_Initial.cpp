@@ -58,6 +58,11 @@ void encryptData_01(char* data, int datalength)
 
 void encryptData_02(char* data, int datalength)
 {
+	//char opA[] = "\nCompleted Op A\n";
+	//char opB[] = "Completed Op B\n";
+	//char opC[] = "Completed Op C\n";
+	//char opD[] = "Completed Op D\n";
+	//char opE[] = "Completed Op E\n";
 
 	__asm {
 		// Get the password hash address
@@ -85,11 +90,23 @@ void encryptData_02(char* data, int datalength)
 		jle		encrypt_done
 
 	encrypt:
+		//lea		esi, byte ptr [edi]
+		//push	esi
+		//call	printf
+		//add		esp, 4
+		//push	500
+		//call	Sleep
+
 		/* Milestone 1 */
 			xor		byte ptr[edi], dl
 
 		/* C-INVERT BITS 0,1,6,7 */
-			xor		byte ptr[edi], C3h
+			xor		byte ptr[edi], 0C3h
+
+			//lea		esi, opC
+			//push	esi
+			//call	printf
+			//add		esp, 4
 
 		/* D-REVERSE BIT ORDER */
 			// Load data[x] into al
@@ -100,22 +117,27 @@ void encryptData_02(char* data, int datalength)
 
 			// Swap pairs of bits
 			mov		bl, al
-			and		al, CCh
+			and		al, 0CCh
 			shr		al, 2
-			and		bl, 33h
+			and		bl, 033h
 			shl		bl, 2
 			or		al, bl
 
 			//		Swap individual bits
 			mov		bl, al
-			and		al, AAh
+			and		al, 0AAh
 			shr		al, 1
-			and		bl, 55h
+			and		bl, 055h
 			shl		bl, 1
 			or		al, bl
 
 			// Store reversed byte
 			mov		byte ptr[edi], al
+
+			//lea		esi, opD
+			//push	esi
+			//call	printf
+			//add		esp, 4
 
 		/* A-ROTATE NIBBLES LEFT */
 			// Load data[x] into al and dl
@@ -146,8 +168,71 @@ void encryptData_02(char* data, int datalength)
 			// Store result
 			mov		byte ptr[edi], al
 
+			//lea		esi, opA
+			//push	esi
+			//call	printf
+			//add		esp, 4
+
 		/* E-ROTATE GH BITS RIGHT */
+			// X == 0
+			cmp		ecx, 0
+			je		OP_E_DONE
+
+			// load byte and previous byte
+			mov		al, byte ptr [edi-1]
+			mov		bl, byte ptr [edi]
+
+			// use AND to mask al (previous)
+			and		al, 03h
+
+			// jump to correct section using CMPs
+			cmp		al, 0
+			je		OP_E_DONE
+			cmp		al, 1
+			je		JMP_01
+			cmp		al, 2
+			je		JMP_10
+			cmp		al, 3
+			je		JMP_11
+		
+			// rotate 1, 2, or 3 bits
+		JMP_01:
+			ror		bl, 1
+			jmp		OP_E_STORE
+		JMP_10:
+			ror		bl, 2
+			jmp		OP_E_STORE
+		JMP_11:
+			ror		bl, 3
+			jmp		OP_E_STORE
+
+			// store new byte into memory
+		OP_E_STORE:
+			mov		byte ptr[edi], bl
+		OP_E_DONE:
+
+			//lea		esi, opE
+			//push	esi
+			//call	printf
+			//add		esp, 4
+
 		/* B-CODE TABLE SWAP */
+			// load address of gEncodeTable
+			lea		ebx, gEncodeTable
+
+			// load current byte zero extended into eax to use it as an offset
+			movzx	eax, byte ptr [edi]
+			
+			// load appropriate gEncodeTable byte into dl
+			mov		dl, byte ptr [ebx + eax]
+
+			// store dl into memory
+			mov		byte ptr [edi], dl
+
+			//lea		esi, opB
+			//push	esi
+			//call	printf
+			//add		esp, 4
 
 		inc		edi
 		dec		ecx
