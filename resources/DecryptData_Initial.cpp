@@ -49,7 +49,80 @@ void decryptData_02(char* data, int sized)
 {
 	__asm
 	{
-		nop		// REPLACE THIS WITH YOUR DECRYPT CODE FOR MILESTONE #2
+		mov		esi, gptrPasswordHash
+
+		movzx	eax, byte ptr[esi]
+		shl		eax, 8
+
+		movzx	edx, byte ptr[esi + 1]
+		add		eax, edx
+
+		mov		esi, gptrKey
+		mov		edi, data
+
+		mov		dl, byte ptr[esi + eax]
+
+		xor		dh, dh
+
+		lea		esi, gDecodeTable
+
+		mov		ecx, sized
+
+		test	ecx, ecx
+		jle		decrypt2_done
+
+		decrypt2:
+			mov		al, byte ptr[edi]
+
+			mov		bh, al
+			and		bh, 3
+
+			movzx	eax, al
+			mov		al, byte ptr[esi + eax]
+
+			push	ecx
+			mov		cl, dh
+			rol		al, cl
+			pop		ecx
+
+			mov		ah, al
+			shr		al, 1
+			and		al, 77h
+
+			shl		ah, 3
+			and		ah, 88h
+
+			or		al, ah
+
+			ror		al, 4
+
+			mov		bl, al
+			and		al, 0CCh
+			shr		al, 2
+			and		bl, 033h
+			shl		bl, 2
+			or		al, bl
+
+			mov		bl, al
+			and		al, 0AAh
+			shr		al, 1
+			and		bl, 055h
+			shl		bl, 1
+			or		al, bl
+
+			xor		al, 0C3h
+
+			xor		al, dl
+
+			mov		byte ptr[edi], al
+
+			mov		dh, bh
+
+			inc edi
+			dec ecx
+			jnz decrypt2
+
+		decrypt2_done:
 	}
 
 	return;
