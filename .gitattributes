@@ -1,0 +1,7 @@
+# Encrypted outputs, key and test inputs are raw bytes - never convert line endings
+*.enc binary
+*.dec binary
+*.dat binary
+*.hex binary
+*.jpg binary
+resources/*.txt binary

@@ -140,27 +140,27 @@ void encryptData_02(char* data, int datalength)
 			//add		esp, 4
 
 		/* A-ROTATE NIBBLES LEFT */
-			// Load data[x] into al and dl
+			// Load data[x] into al and ah (dl holds the key, don't touch it)
 			mov		al, byte ptr[edi]
-			mov		dl, al
+			mov		ah, al
 
 			// Rotate upper nibble left
 			and		al, 70h
 			shl		al, 1
-			and		dl, 80h
-			shr		dl, 3
-			or		al, dl
+			and		ah, 80h
+			shr		ah, 3
+			or		al, ah
 
-			// Load data[x] into bl and dl
+			// Load data[x] into bl and ah
 			mov		bl, byte ptr[edi]
-			mov		dl, bl
+			mov		ah, bl
 
 			// Rotate lower nibble left
 			and		bl, 07h
 			shl		bl, 1
-			and		dl, 08h
-			shr		dl, 3
-			or		bl, dl
+			and		ah, 08h
+			shr		ah, 3
+			or		bl, ah
 
 			// Combine both nibbles
 			or		al, bl
@@ -174,8 +174,8 @@ void encryptData_02(char* data, int datalength)
 			//add		esp, 4
 
 		/* E-ROTATE GH BITS RIGHT */
-			// X == 0
-			cmp		ecx, 0
+			// X == 0 (ecx counts down from datalength, so the first byte is ecx == datalength)
+			cmp		ecx, datalength
 			je		OP_E_DONE
 
 			// load byte and previous byte
@@ -223,11 +223,11 @@ void encryptData_02(char* data, int datalength)
 			// load current byte zero extended into eax to use it as an offset
 			movzx	eax, byte ptr [edi]
 			
-			// load appropriate gEncodeTable byte into dl
-			mov		dl, byte ptr [ebx + eax]
+			// load appropriate gEncodeTable byte into al (dl holds the key, don't touch it)
+			mov		al, byte ptr [ebx + eax]
 
-			// store dl into memory
-			mov		byte ptr [edi], dl
+			// store al into memory
+			mov		byte ptr [edi], al
 
 			//lea		esi, opB
 			//push	esi
